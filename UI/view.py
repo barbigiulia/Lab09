@@ -8,33 +8,35 @@ class View(ft.UserControl):
         self._page = page
         self._page.title = "Template application using MVC and DAO"
         self._page.horizontal_alignment = 'CENTER'
-        self._page.theme_mode = ft.ThemeMode.DARK
+        self._page.theme_mode = ft.ThemeMode.LIGHT
         # controller (it is not initialized. Must be initialized in the main, after the controller is created)
         self._controller = None
         # graphical elements
         self._title = None
-        self.txt_name = None
-        self.btn_hello = None
+        self.txt_distanzaMinima = None
+        self.btn_aeroporti = None
         self.txt_result = None
-        self.txt_container = None
+        #self.txt_container = None
 
     def load_interface(self):
         # title
-        self._title = ft.Text("Hello World", color="blue", size=24)
+        self._title = ft.Text("Flights Manager", color="blue", size=24)
         self._page.controls.append(self._title)
 
         #ROW with some controls
         # text field for the name
-        self.txt_name = ft.TextField(
-            label="name",
-            width=200,
-            hint_text="Insert a your name"
-        )
+        self.txt_distanzaMinima = ft.TextField(
+                                                label="Distanza minima",
+                                                width=200,
+                                                hint_text="Inserisci la distanza media percorsa minima (miglia)"
+                                            )
 
         # button for the "hello" reply
-        self.btn_hello = ft.ElevatedButton(text="Hello", on_click=self._controller.handle_hello)
-        row1 = ft.Row([self.txt_name, self.btn_hello],
+        self.btn_aeroporti = ft.ElevatedButton(text="Analizza Aeroporti",
+                                               on_click=self._controller.handle_aeroporti)
+        row1 = ft.Row([self.txt_distanzaMinima, self.btn_aeroporti],
                       alignment=ft.MainAxisAlignment.CENTER)
+
         self._page.controls.append(row1)
 
         # List View where the reply is printed
