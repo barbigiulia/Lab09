@@ -22,10 +22,30 @@ class Model:
 
     def addEdges(self, distanza_minima):
 
-        for id1, id2, peso in DAO.getEdges(distanza_minima):
-            aeroporto_1 = self.aeroportiMap[id1]
-            aeroporto_2 = self.aeroportiMap[id2]
-            self._grafo.add_edge(aeroporto_1, aeroporto_2, weight=peso)
+        raw_flights = DAO.getAllFlights()
+
+        # dizionario per tenere traccia dei dati
+        dict_pesi = {}
+
+        for id1,id2, dist in raw_flights:
+            if id1> id2:
+                id1, id2 = id2, id1   # normalizzo la coppia
+                # il grafo non è orientato!
+            if (id1, id2) not in dict_pesi:
+                dict_pesi[(id1, id2)] = {"somma_distanze": 0, "num_voli": 0}  # se usassi il ramo else: il primo arco non viene mai aggiornato
+            dict_pesi[(id1, id2)]["somma_distanze"] += dist
+            dict_pesi[(id1, id2)]["num_voli"] += 1
+        # calcolo le medie
+        for (id1, id2), data in dict_pesi.items():
+            if data["num_voli"] == 0:
+                continue
+            media = data["somma_distanze"] / data["num_voli"]
+
+            if media > distanza_minima:
+                # posso aggiungerlo come arco al grafo
+                aeroporto_1 = self.aeroportiMap[id1]
+                aeroporto_2 = self.aeroportiMap[id2]
+                self._grafo.add_edge(aeroporto_1, aeroporto_2, weight=media)
 
 
 
@@ -41,3 +61,9 @@ class Model:
 
     # senza data=True --> (A,B), (C,D) ....
     # con data=True --> (A, B, {'weight': 4300}), (C, D, {'weight': 3900})
+
+
+
+    # SE VOLESSI ORDINARE LA DISTANZA IN ORDINE DECRESCENTE
+    #def getEdgesSorted(self):
+       # return sorted(self._grafo.edges(data=True), key=lambda x: x[2]['weight'],reverse=True   )

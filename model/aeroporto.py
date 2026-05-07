@@ -20,5 +20,3 @@ class Aeroporto:
     def __hash__(self):
         return hash(self.ID)
 
-    def __str__(self):
-        pass

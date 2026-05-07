@@ -23,25 +23,50 @@ class DAO():
         conn.close()
         return res
 
-    @staticmethod
-    def getEdges(distanza_minima):
-        conn = DBConnect.get_connection()
-        cursor  = conn.cursor(dictionary=True)
-        res = []
-        query = """select a.ID as id1, a2.ID as id2 , AVG(f.DISTANCE ) as peso
-                    from flights f
-                    join airports a  
-                    on f.ORIGIN_AIRPORT_ID =a.ID 
-                    join airports a2 
-                    on f.DESTINATION_AIRPORT_ID =a2.ID 
-                    where  a.ID  < a2.ID 
-                    group by  a.ID , a2.ID
-                    having peso > %s
-        """
-        cursor.execute(query, (distanza_minima,))   # attenzione alle parentesi!!!
-        for row in cursor:
-            res.append((row["id1"], row["id2"], row["peso"]))
 
+    @staticmethod
+    def getAllFlights():
+        conn = DBConnect.get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        query = """SELECT 
+            f.ORIGIN_AIRPORT_ID as id1,
+            f.DESTINATION_AIRPORT_ID as id2,
+            f.DISTANCE as distance
+            FROM flights f
+        """
+        cursor.execute(query)
+
+        res = []
+        for row in cursor:
+            res.append((row["id1"], row["id2"], row["distance"]))
         cursor.close()
         conn.close()
         return res
+
+
+
+
+
+    #@staticmethod
+    #def getEdges(distanza_minima):
+        #conn = DBConnect.get_connection()
+        #cursor  = conn.cursor(dictionary=True)
+        #res = []
+        #query = """select a.ID as id1, a2.ID as id2 , AVG(f.DISTANCE ) as peso
+    #            from flights f
+    #          join airports a
+    #          on f.ORIGIN_AIRPORT_ID =a.ID
+    #          join airports a2
+    #         on f.DESTINATION_AIRPORT_ID =a2.ID
+    #        where  a.ID  < a2.ID
+    #        group by  a.ID , a2.ID
+    #         having peso > %s
+        #"""
+        #cursor.execute(query, (distanza_minima,))   # attenzione alle parentesi!!!
+        #for row in cursor:
+    #    res.append((row["id1"], row["id2"], row["peso"]))
+
+        #cursor.close()
+        #conn.close()
+        #return res
